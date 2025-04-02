@@ -1,7 +1,12 @@
 const Movie = require("../models/schema");
 
-const movieIndex = (req, res) => {
-    res.send("Get all  list")
+const movieIndex = async (req, res) => {
+    try {
+        const Movies = await Movie.find()
+        res.json(Movies)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
 };
 
 const movieCreate = async (req, res) => {
@@ -18,11 +23,45 @@ const movieCreate = async (req, res) => {
     }
 }
 
-const moviesUpdate = (req, res) => {
-    res.send("update an movie list")
+const moviesUpdate = async (req, res) => {
+    try {
+        const Updatemovie = await Movie.findOneAndUpdate(
+            { _id: req.params.id },
+            {
+                title: req.body.title,
+                desc: req.body.desc
+            },
+            {
+                new: true,
+            }
+        );
+        res.status(200).json(Updatemovie)
+    } catch (error) {
+        return res.status(400).json({ message: error.message })
+    }
 }
 
-const moviesDelete = (req, res) => {
-    res.send("delete an movie list")
+
+const movieDetail = async (req, res) => {
+    try {
+        const movie = await Movie.findById(req.params.id)
+        if (movie == null) {
+            return res.status(404).json({ message: "Cannot find movie" })
+        } else {
+            res.json(movie)
+        }
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
 }
-module.exports = { movieIndex, movieCreate, moviesUpdate, moviesDelete };
+
+const moviesDelete = async (req, res) => {
+    const movieId = req.params.id;
+    try {
+        await Movie.deleteOne({_id:movieId});
+        res.json({message:"Movie deleted"})
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+module.exports = { movieIndex, movieCreate, moviesUpdate, moviesDelete, movieDetail };

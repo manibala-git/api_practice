@@ -1,5 +1,5 @@
 const express = require('express');
-const { movieIndex, movieCreate, moviesUpdate, moviesDelete } = require('../controllers/moviesController');
+const { movieIndex, movieCreate, moviesUpdate, moviesDelete, movieDetail } = require('../controllers/moviesController');
 
 const router = express.Router()
 
@@ -7,6 +7,8 @@ const router = express.Router()
 //CRUD functionality
 
 router.get("/",movieIndex);
+
+router.get("/:id",movieDetail);
 
 router.post('/',movieCreate)
 
